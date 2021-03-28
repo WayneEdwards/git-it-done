@@ -10,6 +10,7 @@ var getRepoName = function() {
     if (repoName) {
         // display repo name on the page
         repoNameEl.textContent = repoName;
+
         getRepoIssues(repoName);
     } else {
         // if no repo was given, redirect to the homepage
@@ -18,8 +19,9 @@ var getRepoName = function() {
 };
 
 var getRepoIssues = function(repo) {
-    console.log(repo);
+
     var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=asc";
+
     // make a get request to url
     fetch(apiUrl).then(function(response) {
         // request was succesful
@@ -48,11 +50,13 @@ var displayIssues = function(issues) {
         return;
     }
     for (var i = 0; i < issues.length; i++) {
+
         // create a link element to take users to the issue on github
         var issueEl = document.createElement("a");
         issueEl.classList = "list-item flex-row justify space-between align-center";
         issueEl.setAttribute("href", issues[i].html_url);
         issueEl.setAttribute("target", "blank");
+
         //create span to hold issue title
         var titleEl = document.createElement("span");
         titleEl.textContent = issues[i].title;
@@ -75,17 +79,25 @@ var displayIssues = function(issues) {
         issueContainerEl.appendChild(issueEl);
 
     };
+}
 
-    var displayWarning = function(repo) {
-        // add text to warning container
-        limitWarningEl.textContent = "To see more than 30 issues, visit";
-        var linkEl = document.createElement("a");
-        linkEl.textContent = "See More Issues on GitHub.com";
-        linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
-        linkEl.setAttribute("target", "blank");
-    };
+var displayWarning = function(repo) {
+
+    // add text to warning container
+    limitWarningEl.textContent = "To see more than 30 issues, visit";
+
+    // create link element
+    var linkEl = document.createElement("a");
+    linkEl.textContent = "GitHub.com";
+    linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
+    linkEl.setAttribute("target", "blank");
 
     // append to warning container
     limitWarningEl.appendChild(linkEl);
-
 };
+
+
+
+
+
+getRepoName();
