@@ -1,7 +1,36 @@
 var userFormEl = document.querySelector("#user-form");
+var languageButtonsEl = document.querySelector("#language-buttons");
 var nameInputEl = document.querySelector("#username");
 var repoContainerEl = document.querySelector("#repos-container");
 var repoSearchTerm = document.querySelector("#repo-search-term");
+
+var formSubmitHandler = function(event) {
+    event.preventDefault();
+
+    // get value from input element
+    var username = nameInputEl.value.trim();
+
+    if (username) {
+        getUserRepos(username);
+        nameInputEl.value = "";
+    } else {
+        alert("Plese enter a GitHud username");
+
+    }
+
+};
+
+var buttonClickHandler = function(event) {
+    var language =
+        event.target.getAttributes("data-language");
+    console.log(language);
+    if (language) {
+        getFeaturedRepos(language);
+
+        // clear old content
+        repoContainerEl.textContent = "";
+    }
+};
 
 var getUserRepos = function(user) {
     // format the github api url
@@ -15,7 +44,7 @@ var getUserRepos = function(user) {
                     displayRepos(data, user);
                 });
             } else {
-                alert("Error: " + repsonse.statusText);
+                alert("Error: " + response.statusText);
             }
         })
         .catch(function(error) {
@@ -24,23 +53,21 @@ var getUserRepos = function(user) {
 
         });
 
-
 };
 
-var formSubmitHandler = function(event) {
-    event.preventDefault();
-    // get value from input element
-    var username = nameInputEl.value.trim();
+var getFeaturedRepos = function(language) {
+    var apiUrl = "https://api.github.com/search/repositories?q=" + language + "+is:featured&sort=help-wanted-issues";
 
-    if (username) {
-        getUserRepos(username);
-        nameInputEl.value = "";
-    } else {
-        alert("Plese enter a GitHud username");
+    fetch(apiUrl).then(function(response) {
+        if (response.ok) {
+            response.json().then(function(data) {
+                displayRepos(data.items, language);
+            });
 
-    }
-
-
+        } else {
+            alert("Error: " + response.statusText);
+        }
+    });
 }
 
 var displayRepos = function(repos, searchTerm) {
@@ -95,9 +122,11 @@ var displayRepos = function(repos, searchTerm) {
 
     }
 
-
-    console.log(repos);
-    console.log(searchTerm);
 };
 
+
+
+
+
 userFormEl.addEventListener("submit", formSubmitHandler);
+languageButtonsEl.addEventListener("click", buttonClickHandler);
